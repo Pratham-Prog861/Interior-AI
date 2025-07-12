@@ -52,9 +52,29 @@ export default function ProcessingPage() {
     // Get data from session storage
     const storedImageName = sessionStorage.getItem('imageName')
     const storedAnalysisType = sessionStorage.getItem('analysisType') as 'construction' | 'interior'
+    const storedImageData = sessionStorage.getItem('imageData')
     
     if (storedImageName) setImageName(storedImageName)
     if (storedAnalysisType) setAnalysisType(storedAnalysisType)
+
+    // Check if we have image data
+    if (!storedImageData) {
+      console.error('No image data found')
+      router.push('/upload')
+      return
+    }
+
+    // Convert base64 back to File object
+    const base64ToFile = (base64: string, filename: string, mimeType: string) => {
+      const arr = base64.split(',')
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mimeType })
+    }
 
     // Simulate processing steps
     const interval = setInterval(() => {
@@ -62,12 +82,18 @@ export default function ProcessingPage() {
         if (prev >= 100) {
           clearInterval(interval)
           
-          // Generate mock analysis results using the analyzeImage function
-          const mockFile = new File([''], 'mock-image.jpg', { type: 'image/jpeg' })
-          analyzeImage(mockFile, analysisType).then((results) => {
+          // Use the actual uploaded image
+          const imageFile = base64ToFile(storedImageData, storedImageName || 'image.jpg', 'image/jpeg')
+          analyzeImage(imageFile, analysisType).then((results) => {
             sessionStorage.setItem('analysisResults', JSON.stringify(results))
             
             // Redirect to results page
+            setTimeout(() => {
+              router.push('/results')
+            }, 1000)
+          }).catch((error) => {
+            console.error('Analysis failed:', error)
+            // Still redirect to results with fallback data
             setTimeout(() => {
               router.push('/results')
             }, 1000)

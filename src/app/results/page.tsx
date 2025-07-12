@@ -7,6 +7,7 @@ import { MaterialList } from '@/components/material-list'
 import { InteriorLayout } from '@/components/interior-layout'
 import { CostSummary } from '@/components/cost-summary'
 import { ArrowLeft, Download, FileText, Home, Sparkles, CheckCircle, Loader2 } from 'lucide-react'
+import { generatePDFReport } from '@/lib/pdf-generator'
 
 interface AnalysisResults {
   roomArea: number
@@ -24,6 +25,7 @@ export default function ResultsPage() {
   const [results, setResults] = useState<AnalysisResults | null>(null)
   const [analysisType, setAnalysisType] = useState<'construction' | 'interior'>('construction')
   const [imageName, setImageName] = useState('')
+  const [isDownloading, setIsDownloading] = useState(false)
 
   useEffect(() => {
     // Get data from session storage
@@ -43,9 +45,20 @@ export default function ResultsPage() {
     }
   }, [router])
 
-  const handleDownloadReport = () => {
-    // Simulate download
-    alert('Report download started! (This is a demo)')
+  const handleDownloadReport = async () => {
+    if (!results) return
+    
+    setIsDownloading(true)
+    try {
+      await generatePDFReport(results, analysisType, imageName)
+      // Show success message
+      alert('Report downloaded successfully!')
+    } catch (error) {
+      console.error('Failed to generate PDF:', error)
+      alert('Failed to generate PDF report. Please try again.')
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   const handleViewSuggestions = () => {
@@ -110,10 +123,20 @@ export default function ResultsPage() {
               </Button>
               <Button 
                 onClick={handleDownloadReport}
+                disabled={isDownloading}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <Download className="w-4 h-4 mr-2" />
-                Download Report
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Report
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -164,6 +187,7 @@ export default function ResultsPage() {
                 suggestions={results.suggestions}
                 onDownloadReport={handleDownloadReport}
                 onViewSuggestions={handleViewSuggestions}
+                isDownloading={isDownloading}
               />
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Download, FileText, Lightbulb } from 'lucide-react'
+import { Download, FileText, Lightbulb, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface CostSummaryProps {
@@ -14,6 +14,7 @@ interface CostSummaryProps {
   suggestions: string[]
   onDownloadReport?: () => void
   onViewSuggestions?: () => void
+  isDownloading?: boolean
   className?: string
 }
 
@@ -26,6 +27,7 @@ export function CostSummary({
   suggestions,
   onDownloadReport,
   onViewSuggestions,
+  isDownloading = false,
   className 
 }: CostSummaryProps) {
   const formatCurrency = (amount: number) => {
@@ -125,9 +127,19 @@ export function CostSummary({
           onClick={onDownloadReport}
           className="flex-1"
           size="lg"
+          disabled={isDownloading}
         >
-          <Download className="w-4 h-4 mr-2" />
-          Download Report
+          {isDownloading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4 mr-2" />
+              Download Report
+            </>
+          )}
         </Button>
         <Button 
           variant="outline" 

@@ -26,14 +26,18 @@ export default function UploadPage() {
 
     setIsProcessing(true)
     
-    // Store data in session storage for the results page
-    sessionStorage.setItem('analysisType', selectedType)
-    sessionStorage.setItem('imageName', selectedImage.name)
-    
-    // Simulate processing delay
-    setTimeout(() => {
+    // Convert image to base64 and store in session storage
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = reader.result as string
+      sessionStorage.setItem('imageData', base64)
+      sessionStorage.setItem('analysisType', selectedType)
+      sessionStorage.setItem('imageName', selectedImage.name)
+      
+      // Navigate to processing page
       router.push('/processing')
-    }, 500)
+    }
+    reader.readAsDataURL(selectedImage)
   }
 
   const analysisTypes = [
