@@ -1,0 +1,24 @@
+Build a web application with the following functionality:
+
+1. User uploads an image of a construction blueprint or room interior.
+2. The app analyzes the image and provides:
+   - Estimated construction materials required (e.g., bricks, sand, cement, etc.)
+   - Suggested interior items (e.g., beds, doors, windows) with estimated quantities
+   - Placement suggestions for interior items (e.g., where to put beds, furniture, doors)
+   - A cost estimate for both construction and interior
+   - Optional suggestions to improve design, layout, or aesthetics
+   - A final total estimate summary
+
+Build the following pages:
+
+- Home page: Introduction and button to start
+- Upload page: Form for image upload with options (Construction / Interior)
+- Processing page: Shows the uploaded image with a loading state while analysis happens
+- Results page: 
+   - Section 1: Construction material breakdown with estimated cost
+   - Section 2: Interior layout suggestions with items and cost
+   - Section 3: Total estimate summary
+- Optional: Suggestions page that displays AI-generated improvements to layout/design
+- Optional: Download page to export all results as a report or PDF
+
+The UI should be clean, user-friendly, and responsive. Simulate image analysis using dummy logic or placeholder functions for now. Use mock data for materials, item quantities, and pricing. Structure the project using reusable components for image upload, material list, interior plan, and cost summary.
